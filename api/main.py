@@ -31,6 +31,10 @@ async def create_item(request: Request):
     if "name" not in data:
         raise HTTPException(status_code=400, detail="'name' field is required")
 
+    existing = await Item.get_or_none(name=data["name"])
+    if existing:
+        raise HTTPException(status_code=400, detail=f'Item with name "{data["name"]}" already exists')
+
     item = await Item.create(
         name=data.get("name"),
         comment=data.get("comment"),
@@ -48,8 +52,13 @@ async def create_item(request: Request):
 
 @app.get("/items")
 async def get_items():
-    items = await Item.all().values()
-    return items
+    query = Item.all()
+    items = await query.limit(10).values
+    count = await query.count()
+    return  {
+        "count": count,
+        "data": items
+    }
 
 
 @app.get("/item")
