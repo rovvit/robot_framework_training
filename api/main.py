@@ -28,15 +28,17 @@ async def create_item(request: Request):
     data = await request.json()
     logger.info(f"Received data: {data}")
 
-    if "name" not in data:
+    name = data.get("name")
+
+    if not name:
         raise HTTPException(status_code=400, detail="'name' field is required")
 
-    existing = await Item.get_or_none(name=data["name"])
+    existing = await Item.get_or_none(name=name)
     if existing:
-        raise HTTPException(status_code=400, detail=f'''Item with name '{data["name"]}' already exists''')
+        raise HTTPException(status_code=400, detail=f'''Item with name '{name}' already exists''')
 
     item = await Item.create(
-        name=data.get("name"),
+        name=name,
         comment=data.get("comment"),
         category=data.get("category"),
     )
