@@ -33,7 +33,7 @@ async def create_item(request: Request):
 
     existing = await Item.get_or_none(name=data["name"])
     if existing:
-        raise HTTPException(status_code=400, detail=f"Item with name '{data["name"]}' already exists")
+        raise HTTPException(status_code=400, detail=f'''Item with name '{data["name"]}' already exists''')
 
     item = await Item.create(
         name=data.get("name"),
