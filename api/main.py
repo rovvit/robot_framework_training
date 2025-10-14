@@ -53,7 +53,7 @@ async def create_item(request: Request):
 @app.get("/items")
 async def get_items():
     query = Item.all()
-    items = await query.limit(10).values
+    items = await query.limit(10).values()
     count = await query.count()
     return  {
         "count": count,
